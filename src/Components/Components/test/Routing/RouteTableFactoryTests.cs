@@ -11,10 +11,11 @@ public class RouteTableFactoryTests
     public void CanCacheRouteTable()
     {
         // Arrange
-        var routes1 = RouteTableFactory.Create(new RouteKey(GetType().Assembly, null));
+        var routeTableFactory = new RouteTableFactory();
+        var routes1 = routeTableFactory.Create(new RouteKey(GetType().Assembly, null));
 
         // Act
-        var routes2 = RouteTableFactory.Create(new RouteKey(GetType().Assembly, null));
+        var routes2 = routeTableFactory.Create(new RouteKey(GetType().Assembly, null));
 
         // Assert
         Assert.Same(routes1, routes2);
@@ -24,10 +25,11 @@ public class RouteTableFactoryTests
     public void CanCacheRouteTableWithDifferentAssembliesAndOrder()
     {
         // Arrange
-        var routes1 = RouteTableFactory.Create(new RouteKey(typeof(object).Assembly, new[] { typeof(ComponentBase).Assembly, GetType().Assembly, }));
+        var routeTableFactory = new RouteTableFactory();
+        var routes1 = routeTableFactory.Create(new RouteKey(typeof(object).Assembly, new[] { typeof(ComponentBase).Assembly, GetType().Assembly, }));
 
         // Act
-        var routes2 = RouteTableFactory.Create(new RouteKey(typeof(object).Assembly, new[] { GetType().Assembly, typeof(ComponentBase).Assembly, }));
+        var routes2 = routeTableFactory.Create(new RouteKey(typeof(object).Assembly, new[] { GetType().Assembly, typeof(ComponentBase).Assembly, }));
 
         // Assert
         Assert.Same(routes1, routes2);
@@ -37,10 +39,11 @@ public class RouteTableFactoryTests
     public void DoesNotCacheRouteTableForDifferentAssemblies()
     {
         // Arrange
-        var routes1 = RouteTableFactory.Create(new RouteKey(GetType().Assembly, null));
+        var routeTableFactory = new RouteTableFactory();
+        var routes1 = routeTableFactory.Create(new RouteKey(GetType().Assembly, null));
 
         // Act
-        var routes2 = RouteTableFactory.Create(new RouteKey(GetType().Assembly, new[] { typeof(object).Assembly }));
+        var routes2 = routeTableFactory.Create(new RouteKey(GetType().Assembly, new[] { typeof(object).Assembly }));
 
         // Assert
         Assert.NotSame(routes1, routes2);
@@ -50,7 +53,8 @@ public class RouteTableFactoryTests
     public void IgnoresIdenticalTypes()
     {
         // Arrange & Act
-        var routes = RouteTableFactory.Create(new RouteKey(GetType().Assembly, new[] { GetType().Assembly }));
+        var routeTableFactory = new RouteTableFactory();
+        var routes = routeTableFactory.Create(new RouteKey(GetType().Assembly, new[] { GetType().Assembly }));
 
         // Assert
         Assert.Equal(routes.Routes.GroupBy(x => x.Handler).Count(), routes.Routes.Length);
